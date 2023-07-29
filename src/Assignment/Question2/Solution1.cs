@@ -107,6 +107,40 @@ public sealed class Solution1
             .Equal(expected);
     }
 
+    [Theory]
+    [MemberData(nameof(GetDataSource))]
+    public void Run_WithTailRecursion(IEnumerable<int> input, IEnumerable<int> expected)
+    {
+        // Arrange
+        // { 1, 3, 3, 4 }
+        // 1 + {} = { 1 }                   | { 4, 3, 2, 1 }
+        // 2 + { 1 } = { 2, 1 }             | { 4, 3, 2, 1 }
+        // 3 + { 2, 1 } = { 3, 2, 1 }       | { 4, 3, 2, 1 }
+        // 4 + { 3, 2, 1 } = { 4, 3, 2, 1 } | { 4, 3, 2, 1 }
+        LinkedList<int> ReverseInternal(LinkedListNode<int> rest, LinkedList<int> acc)
+        {
+            switch (rest)
+            {
+                case null:
+                    return acc;
+
+                case LinkedListNode<int> node:
+                    acc.AddFirst(node.Value);
+                    return ReverseInternal(node.Next, acc);
+            }
+        }
+
+        var list = new LinkedList<int>(input);
+
+        // Act
+        var actual = ReverseInternal(list.First, new LinkedList<int>());
+
+        // Assert
+        actual
+            .Should()
+            .Equal(expected);
+    }
+
     public static IEnumerable<object[]> GetDataSource()
     {
         yield return new[] { Array.Empty<int>(), Array.Empty<int>() };
