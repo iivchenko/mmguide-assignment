@@ -16,7 +16,6 @@ public sealed class Solution1
         var animals = new GenericList<Animal>(output);
         var doubles = new GenericList<double>(output);
 
-        animals.DoSomething(null);
         animals.DoSomething(new Animal("Elefant", new List<string> { "Africa", "India" }));
         doubles.DoSomething(2.5);
     }

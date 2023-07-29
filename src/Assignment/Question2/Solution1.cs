@@ -77,29 +77,29 @@ public sealed class Solution1
     {
         // Arrange
         // {1, 2, 3, 4 }
-        // 1 | 1 + { 2, 3, 4} = { 1, 2, 3, 4}
-        // 2 | 2 + { 3, 4} = { 2, 3, 4}
-        // 3 | 3 + { 4 } = { 3, 4}
+        // 1 | 1 + { 2, 3, 4} = { 1, 2, 3, 4 }
+        // 2 | 2 + { 3, 4} = { 2, 3, 4 }
+        // 3 | 3 + { 4 } = { 3, 4 }
         // 4 | 4 + { } = { 4 }
         // * | { }
-        LinkedList<int> ReverseInternal(LinkedListNode<int> rest)
+        LinkedList<int> ReverseInternal(LinkedListNode<int>? rest)
         {
-            switch (rest)
+            switch(rest)
             {
                 case null:
                     return new LinkedList<int>();
 
                 case LinkedListNode<int> node:
-                    var list = ReverseInternal(node.Next);
-                    list.AddLast(node.Value);
-                    return list;
-            }
+                    var acc = ReverseInternal(node.Next);
+                    acc.AddLast(node.Value);
+                    return acc;
+            };
         }
 
         var list = new LinkedList<int>(input);
 
         // Act
-        var actual = new LinkedList<int>(ReverseInternal(list.First));
+        var actual = ReverseInternal(list.First);
 
         // Assert
         actual
@@ -117,7 +117,7 @@ public sealed class Solution1
         // 2 + { 1 } = { 2, 1 }             | { 4, 3, 2, 1 }
         // 3 + { 2, 1 } = { 3, 2, 1 }       | { 4, 3, 2, 1 }
         // 4 + { 3, 2, 1 } = { 4, 3, 2, 1 } | { 4, 3, 2, 1 }
-        LinkedList<int> ReverseInternal(LinkedListNode<int> rest, LinkedList<int> acc)
+        LinkedList<int> ReverseInternal(LinkedListNode<int>? rest, LinkedList<int> acc)
         {
             switch (rest)
             {
@@ -125,7 +125,7 @@ public sealed class Solution1
                     return acc;
 
                 case LinkedListNode<int> node:
-                    acc.AddFirst(node.Value);
+                    acc.AddFirst(rest.Value);
                     return ReverseInternal(node.Next, acc);
             }
         }
