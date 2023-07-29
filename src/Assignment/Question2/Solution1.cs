@@ -47,6 +47,30 @@ public sealed class Solution1
             .Equal(expected);
     }
 
+    [Theory]
+    [MemberData(nameof(GetDataSource))]
+    public void Run_WithLoopsBackwards(IEnumerable<int> input, IEnumerable<int> expected)
+    {
+        // Arrange
+        var list = new LinkedList<int>(input);
+
+        // Act
+        var actual = new LinkedList<int>();
+        var current = list.Last;
+
+        while (current != null)
+        {
+            actual.AddLast(current.Value);
+
+            current = current.Previous;
+        }
+
+        // Assert
+        actual
+            .Should()
+            .Equal(expected);
+    }
+
     public static IEnumerable<object[]> GetDataSource()
     {
         yield return new[] { Array.Empty<int>(), Array.Empty<int>() };
