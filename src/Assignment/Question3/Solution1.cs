@@ -36,7 +36,30 @@ public sealed class Solution1
         // Assert
         actual.Should().BeFalse();
     }
-    
+
+    [Theory]
+    [MemberData(nameof(GetDataSource))]
+    public void RunAlgorithm2_ShouldReturnTrue_WhenAnagrams(string value1, string value2)
+    {
+        // Act
+        var actual = Algorithm2.AreAnagrams(value1, value2);
+
+        // Assert
+        actual.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("car", "card")]
+    [InlineData("arc", "card")]
+    public void RunAlgorithm2_ShouldReturnFalse_WhenNotAnagrams(string value1, string value2)
+    {
+        // Act
+        var actual = Algorithm2.AreAnagrams(value1, value2);
+
+        // Assert
+        actual.Should().BeFalse();
+    }
+
     [Fact]
     public void RunBanchmarks()
     {
@@ -63,7 +86,7 @@ public sealed class Solution1
 
         var original =
             Enumerable
-                .Range(0, 500)
+                .Range(0, 100)
                 .Select(_ => (char)Random.Shared.Next(255))
                 .ToArray();
 
@@ -82,6 +105,12 @@ public sealed class Solution1
         public void RunAlgorithm1()
         {
             Algorithm1.AreAnagrams(Value, Value);
+        }
+
+        [Benchmark]
+        public void RunAlgorithm2()
+        {
+            Algorithm2.AreAnagrams(Value, Value);
         }
 
         public IEnumerable<string> GetDataSource()
@@ -123,6 +152,40 @@ public sealed class Solution1
         private static string Normalize(string value)
         {
             return new string(value.Order().ToArray());
+        }
+    }
+
+    private sealed class Algorithm2
+    {
+        // Complexity
+        //   == (time): O(1)
+        //   == (space): O(1)
+        //   Hash (time): O(n)
+        //   Hash (space): O(1)
+        //   Calculation (time): O(1) + O(n) + O(n) = O(n)
+        //   Calculation (spce): O(1) + O(1) + O(1) = O(1)
+        public static bool AreAnagrams(string value1, string value2)
+        {
+            return
+                value1.Length == value2.Length &&
+                Hash(value1) == Hash(value2);
+        }
+
+        // Complexity
+        //   Select (time): O(1)
+        //   Select (space): O(1)
+        //   Sum (time): O(n)
+        //   Sum (space): O(1)
+        //   GetHashCode (time): O(1)
+        //   GetHashCode (space): O(1)
+        //   Calculation (time): O(1) + nO(1) + O(n) = O(n)
+        //   Calculation (space): O(1) + nO(1) + O(1) = O(1)
+        private static int Hash(string value)
+        {
+            return
+                value
+                    .Select(x => x.GetHashCode())
+                    .Sum();
         }
     }
 }
