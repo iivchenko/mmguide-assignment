@@ -99,7 +99,7 @@ public sealed class Solution1
     public class SolutionBenchmarks
     {
         [ParamsSource(nameof(GetDataSource))]
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
 
         [Benchmark]
         public void RunAlgorithm1()
@@ -129,9 +129,9 @@ public sealed class Solution1
         // Complexity
         //   == (time): O(1)
         //   == (space): O(1)
-        //   Normalize (time): O(n)
+        //   Normalize (time): O(nlog(n))
         //   Normalize (space): O(n)
-        //   Calculation (time): O(1) + O(n) + O(n) = O(n)
+        //   Calculation (time): O(1) + O(nlog(n)) + O(nlog(n)) = O(n)
         //   Calculation (spce): O(1) + O(n) + O(n) = O(n)
         public static bool AreAnagrams(string value1, string value2)
         {
@@ -141,14 +141,14 @@ public sealed class Solution1
         }
 
         // Complexity
-        //   Order (time): O(1)
-        //   Order (space): O(1)
+        //   Order (time): O(nlog(n)) (quick sort underneath)
+        //   Order (space): O(n) (spotted several allocations in src)
         //   ToArray (time): O(n)
         //   ToArray (space): O(n)
-        //   new (time): O(n)
-        //   new (space): O(n)
-        //   Calculation (time): O(1) + O(n) + O(n) = O(n)
-        //   Calculation (space): O(1) + O(n) + O(n) = O(n)
+        //   new string (time): O(n) (native buffer copy)
+        //   new string (space): O(n) (native buffer copy)
+        //   Calculation (time): O(nlog(n)) + O(n) + O(n) = O(nlog(n))
+        //   Calculation (space): O(n) + O(n) + O(n) = O(n)
         private static string Normalize(string value)
         {
             return new string(value.Order().ToArray());
@@ -168,19 +168,19 @@ public sealed class Solution1
         {
             return
                 value1.Length == value2.Length &&
-                Hash(value1) == Hash(value2);
+                ToCharsHash(value1) == ToCharsHash(value2);
         }
 
         // Complexity
-        //   Select (time): O(1)
-        //   Select (space): O(1)
+        //   Select (time): O(n)
+        //   Select (space): O(n)
         //   Sum (time): O(n)
         //   Sum (space): O(1)
         //   GetHashCode (time): O(1)
         //   GetHashCode (space): O(1)
-        //   Calculation (time): O(1) + nO(1) + O(n) = O(n)
-        //   Calculation (space): O(1) + nO(1) + O(1) = O(1)
-        private static int Hash(string value)
+        //   Calculation (time): O(nO(1)) + O(n) = O(n)
+        //   Calculation (space): O(nO(1)) + O(1) = O(n)
+        private static int ToCharsHash(string value)
         {
             return
                 value
